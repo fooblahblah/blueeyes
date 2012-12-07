@@ -102,7 +102,7 @@ trait ServiceDescriptorFactoryCombinators extends HttpRequestHandlerCombinators 
    * }
    * }}}
    */
-  def help[T, S](f: => ServiceDescriptorFactory[T, S])(implicit s2t: String => T, executor: ExecutionContext): ServiceDescriptorFactory[T, S] = {
+  def help[T, S](f: => ServiceDescriptorFactory[T, S])(implicit conforms: String => T, executor: ExecutionContext): ServiceDescriptorFactory[T, S] = {
     (context: ServiceContext) => {
       val underlying = f(context)
       underlying.copy(

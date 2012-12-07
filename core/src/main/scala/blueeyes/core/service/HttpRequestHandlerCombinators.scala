@@ -17,7 +17,7 @@ import scalaz.Semigroup
 
 
 trait HttpRequestHandlerCombinators {
-  implicit def service[A, B](handler: HttpServiceHandler[A, B]): HttpService[A, B] = 
+  implicit def service[A, B](handler: HttpServiceHandler[A, B]): HttpService[A, B] =
     new HttpHandlerService(handler, identity[A])
 
   /** The path combinator creates a handler that is defined only for suffixes
@@ -121,7 +121,7 @@ trait HttpRequestHandlerCombinators {
    * }}}
    */
   def getRange[A, B](delegate: HttpService[A, RangeHeaderValues => B]): HttpService[A, B] = {
-    val s0 = new GetRangeService(delegate) 
+    val s0 = new GetRangeService(delegate)
     method(HttpMethods.GET)(s0)
   }
 
@@ -140,7 +140,7 @@ trait HttpRequestHandlerCombinators {
    * }
    * </pre>
    */
-  def extract[A, B, E1](extractor: HttpRequest[A] => E1): HttpService[A, E1 => B] => HttpService[A, B] = 
+  def extract[A, B, E1](extractor: HttpRequest[A] => E1): HttpService[A, E1 => B] => HttpService[A, B] =
     new ExtractService[A, B, E1](extractor, _)
 
   /** A special-case extractor for parameters.
@@ -192,35 +192,35 @@ trait HttpRequestHandlerCombinators {
     }
   }
 
-  implicit def transcode[A, B](h: HttpService[Future[B], Future[HttpResponse[B]]])(implicit inj: A => Future[B], surj: B => A) = 
+  implicit def transcode[A, B](h: HttpService[Future[B], Future[HttpResponse[B]]])(implicit inj: A => Future[B], surj: B => A) =
     new TranscodeService[A, B](h)
 
   /** The accept combinator creates a handler that is defined only for requests
    * that have the specified content type. Requires an implicit function
    * used for transcoding.
    */
-  def accept[A, B, A0](mimeType: MimeType)(h: HttpService[Future[A], Future[HttpResponse[B]]])(implicit f: A0 => Future[A]): HttpService[A0, Future[HttpResponse[B]]] = 
+  def accept[A, B, A0](mimeType: MimeType)(h: HttpService[Future[A], Future[HttpResponse[B]]])(implicit f: A0 => Future[A]): HttpService[A0, Future[HttpResponse[B]]] =
     new AcceptService[A, B, A0](mimeType, h)
 
   /** The accept combinator creates a handler that is defined only for requests
    * that have the specified content type. Requires an implicit function
    * used for transcoding.
    */
-  def accept2[A, B, A0, E1](mimeType: MimeType)(h: HttpService[Future[A], E1 => Future[HttpResponse[B]]])(implicit f: A0 => Future[A]) = 
+  def accept2[A, B, A0, E1](mimeType: MimeType)(h: HttpService[Future[A], E1 => Future[HttpResponse[B]]])(implicit f: A0 => Future[A]) =
     new Accept2Service[A, B, A0, E1](mimeType, h)
 
   /** The produce combinator creates a handler that is produces responses
    * that have the specified content type. Requires an implicit function
    * used for transcoding.
    */
-  def produce[A, B, B0](mimeType: MimeType)(h: HttpService[A, Future[HttpResponse[B]]])(implicit f: B => B0): HttpService[A, Future[HttpResponse[B0]]] = 
+  def produce[A, B, B0](mimeType: MimeType)(h: HttpService[A, Future[HttpResponse[B]]])(implicit f: B => B0): HttpService[A, Future[HttpResponse[B0]]] =
     new ProduceService(mimeType, h, f)
 
   /** The produce combinator creates a handler that is produces responses
    * that have the specified content type. Requires an implicit bijection
    * used for transcoding.
    */
-  def produce2[A, B, B0, E1](mimeType: MimeType)(h: HttpService[A, E1 => Future[HttpResponse[B]]])(implicit f: B => B0): HttpService[A, E1 => Future[HttpResponse[B0]]] = 
+  def produce2[A, B, B0, E1](mimeType: MimeType)(h: HttpService[A, E1 => Future[HttpResponse[B]]])(implicit f: B => B0): HttpService[A, E1 => Future[HttpResponse[B0]]] =
     new Produce2Service(mimeType, h, f)
 
   /** The content type combinator creates a handler that accepts and produces
@@ -243,19 +243,19 @@ trait HttpRequestHandlerCombinators {
    *  The compress combinator creates a handler that compresses content by encoding supported by client
    *  (specified by Accept-Encoding header). The combinator supports gzip and deflate encoding.
    */
-  def compress(h: HttpService[ByteChunk, Future[HttpResponse[ByteChunk]]])(implicit supportedCompressions: Map[Encoding, ChunkCompression]) = 
+  def compress(h: HttpService[ByteChunk, Future[HttpResponse[ByteChunk]]])(implicit supportedCompressions: Map[Encoding, ChunkCompression]) =
     new CompressService(h)
 
-  def compress2[E1](h: HttpService[ByteChunk, E1 => Future[HttpResponse[ByteChunk]]])(implicit supportedCompressions: Map[Encoding, ChunkCompression]) = 
+  def compress2[E1](h: HttpService[ByteChunk, E1 => Future[HttpResponse[ByteChunk]]])(implicit supportedCompressions: Map[Encoding, ChunkCompression]) =
     new CompressService2[E1](h)
 
   /** The aggregate combinator creates a handler that stitches together chunks
    * to make a bigger chunk, up to the specified size.
    */
-  def aggregate(chunkSize: Option[DataSize])(h: HttpService[ByteChunk, Future[HttpResponse[ByteChunk]]])(implicit executor: ExecutionContext) = 
+  def aggregate(chunkSize: Option[DataSize])(h: HttpService[ByteChunk, Future[HttpResponse[ByteChunk]]])(implicit executor: ExecutionContext) =
     new AggregateService(chunkSize, h)
 
-  def aggregate2[E1](chunkSize: Option[DataSize])(h: HttpService[ByteChunk, E1 => Future[HttpResponse[ByteChunk]]])(implicit executor: ExecutionContext) = 
+  def aggregate2[E1](chunkSize: Option[DataSize])(h: HttpService[ByteChunk, E1 => Future[HttpResponse[ByteChunk]]])(implicit executor: ExecutionContext) =
     new Aggregate2Service[E1](chunkSize, h)
 
   /** The jsonp combinator creates a handler that accepts and produces JSON.
@@ -264,31 +264,31 @@ trait HttpRequestHandlerCombinators {
    * HTTP method and content using the query string parameters "method" and
    * "content", respectively.
    */
-  def jsonp[A](delegate: HttpService[A, Future[HttpResponse[A]]])(implicit fromString: String => A, semigroup: Semigroup[A]) = 
+  def jsonp[A](delegate: HttpService[A, Future[HttpResponse[A]]])(implicit fromString: String => A, semigroup: Semigroup[A]) =
     new JsonpService[A](delegate)
 
-  def jsonp2[A, E1](delegate: HttpService[A, E1 => Future[HttpResponse[A]]])(implicit fromString: String => A, semigroup: Semigroup[A]) = 
+  def jsonp2[A, E1](delegate: HttpService[A, E1 => Future[HttpResponse[A]]])(implicit fromString: String => A, semigroup: Semigroup[A]) =
     new Jsonp2Service[A, E1](delegate)
 
   /** The jvalue combinator creates a handler that accepts and produces JSON.
    * Requires an implicit bijection used for transcoding.
    */
-  def jvalue[A](h: HttpService[Future[JValue], Future[HttpResponse[JValue]]])(implicit inj: A => Future[JValue], f2: JValue => A): HttpService[A, Future[HttpResponse[A]]] = 
+  def jvalue[A](h: HttpService[Future[JValue], Future[HttpResponse[JValue]]])(implicit inj: A => Future[JValue], f2: JValue => A): HttpService[A, Future[HttpResponse[A]]] =
     contentType(MimeTypes.application/MimeTypes.json) { h }
 
-  def jvalue2[A, E1](h: HttpService[Future[JValue], E1 => Future[HttpResponse[JValue]]])(implicit inj: A => Future[JValue], f2: JValue => A) = 
+  def jvalue2[A, E1](h: HttpService[Future[JValue], E1 => Future[HttpResponse[JValue]]])(implicit conforms: A => Future[JValue], f2: JValue => A) =
     contentType2(MimeTypes.application/MimeTypes.json) { h }
 
   /** The xml combinator creates a handler that accepts and produces XML.
    * Requires an implicit bijection used for transcoding.
    */
-  def xml[A](h: HttpService[Future[NodeSeq], Future[HttpResponse[NodeSeq]]])(implicit inj: A => Future[NodeSeq], surj: NodeSeq => A) = 
+  def xml[A](h: HttpService[Future[NodeSeq], Future[HttpResponse[NodeSeq]]])(implicit conforms: A => Future[NodeSeq], surj: NodeSeq => A) =
     contentType(MimeTypes.text/MimeTypes.xml) { h }
 
-  def xml2[A, E1](h: HttpService[Future[NodeSeq], E1 => Future[HttpResponse[NodeSeq]]])(implicit inj: A => Future[NodeSeq], surj: NodeSeq => A) = 
+  def xml2[A, E1](h: HttpService[Future[NodeSeq], E1 => Future[HttpResponse[NodeSeq]]])(implicit conforms: A => Future[NodeSeq], surj: NodeSeq => A) =
     contentType2(MimeTypes.text/MimeTypes.xml) { h }
 
-  def forwarding[A, A0](f: HttpRequest[A] => Option[HttpRequest[A0]], httpClient: HttpClient[A0]) = 
+  def forwarding[A, A0](f: HttpRequest[A] => Option[HttpRequest[A0]], httpClient: HttpClient[A0]) =
     (h: HttpService[A, HttpResponse[A]]) => new ForwardingService[A, A0](f, httpClient, h)
 
   def metadata[A, B](metadata: Metadata*)(h: HttpService[A, Future[HttpResponse[B]]]) = new MetadataService(Some(AndMetadata(metadata: _*)), h)

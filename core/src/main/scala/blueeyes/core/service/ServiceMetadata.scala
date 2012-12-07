@@ -123,7 +123,7 @@ object Metadata {
       }
       AndMetadata(paths(mergeDesc(ab: _*)): _*)
     }
-  }  
+  }
 
   implicit object StringFormatter extends Formatter[Metadata, String] {
     def format(m: Metadata) = formatMetadata(m)
@@ -156,7 +156,7 @@ object Metadata {
         Append(Seq(Nest(ValueCaption("Parameter Type", "Parameter", "Description")), Break) ++
         metadata.map(m => Nest(formatMetadata(m)): Printable[String]).toList.intersperse(Append(Break, Break)): _*)
 
-      case AboutMetadata(metadata, about) => 
+      case AboutMetadata(metadata, about) =>
         formatMetadata(metadata) ~ Break ~ Nest(formatMetadata(about))
 
       case AndMetadata(metadata @ _*) => metadata match {

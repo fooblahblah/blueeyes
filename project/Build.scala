@@ -55,33 +55,33 @@ object BlueEyesBuild extends Build {
 
     publishTo <<= (version) { version: String =>
       val nexus = "http://nexus.reportgrid.com/content/repositories/"
-      if (version.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus+"public-snapshots/") 
+      if (version.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus+"public-snapshots/")
       else                                   Some("releases"  at nexus+"public-releases/")
     }
   )
 
-  val specs2Version = "1.12.2"
+  val specs2Version = "1.12.3"
 
   val commonSettings = Seq(
-    scalaVersion := "2.9.2",
+    scalaVersion := "2.10.0-RC3",
 
-    crossScalaVersions := Seq("2.9.2"),
+    crossScalaVersions := Seq("2.10.0-RC3"),
 
     version := "1.0.0-SNAPSHOT",
 
     organization := "com.reportgrid",
 
     libraryDependencies ++= Seq(
-      "org.scalaz"         %% "scalaz-core"  % "7.0-SNAPSHOT" changing(),
-      "org.specs2"         %% "specs2"       % specs2Version    % "test" changing(),
-      "org.scalacheck"     %% "scalacheck"   % "1.10.0"         % "test"
+      "org.scalaz"         % "scalaz-core_2.10.0-RC3" % "7.0-SNAPSHOT" changing(),
+      "org.specs2"         % "specs2_2.10.0-RC3"      % specs2Version    % "test" changing(),
+      "org.scalacheck"     % "scalacheck_2.10.0-RC3"  % "1.10.0"         % "test"
     ),
 
     scalacOptions ++= Seq("-deprecation", "-unchecked")
   )
 
   lazy val blueeyes = Project(id = "blueeyes", base = file(".")).settings((nexusSettings ++ commonSettings): _*) aggregate(util, json, akka_testing, bkka, core, test, mongo)
-  
+
   lazy val util  = Project(id = "util", base = file("util")).settings((nexusSettings ++ commonSettings): _*)
 
   lazy val json  = Project(id = "json", base = file("json")).settings((nexusSettings ++ commonSettings): _*)
